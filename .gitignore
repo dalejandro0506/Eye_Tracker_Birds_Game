@@ -1,0 +1,17 @@
+# RStudio
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Gazepoint: solo se publica Gazepoint/result/ (dataset de prueba anonimizado).
+# El resto del proyecto de Gazepoint Analysis queda fuera: videos del rostro y de
+# la pantalla, copias de respaldo, archivos de sesión y el archivo .prj, que
+# puede contener nombres de participantes.
+Gazepoint/*
+!Gazepoint/result/
