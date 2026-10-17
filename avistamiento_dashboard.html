@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avistamiento de Aves en la Selva — Resultados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --amarillo:#F2B705; --rojo:#E12B27; --morado:#CC2B9E;
+  --verde:#1DBF73; --verde-2:#4CC38A; --naranja:#F4A23B;
+  --oro:#FFD23F; --plata:#C7D0DD; --bronce:#E08A3C;
+  --tinta:#243B36; --tinta-2:#5B7068; --crema:#F2F8F3;
+  --panel:#FFFFFF; --linea:#E6EEE8;
+  --sombra:0 10px 30px rgba(31,74,58,.10);
+  --radio:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Nunito',system-ui,sans-serif; color:var(--tinta);
+  background:
+    radial-gradient(1200px 500px at 80% -10%, #E6F7EE 0%, transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, #FFF3D6 0%, transparent 55%),
+    var(--crema);
+  min-height:100vh; padding:22px;
+}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3,.score{font-family:'Poppins','Nunito',sans-serif}
+
+/* ---------- HEADER ---------- */
+.bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--panel);border-radius:var(--radio);padding:16px 22px;box-shadow:var(--sombra)}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+.brand .logo{width:52px;height:52px;border-radius:16px;
+  background:linear-gradient(135deg,#1DBF73,#7BD389);display:grid;place-items:center}
+.brand h1{font-size:21px;line-height:1.05}
+.brand p{font-size:13px;color:var(--tinta-2);font-weight:700}
+.seg{display:flex;background:var(--crema);border-radius:999px;padding:5px;gap:4px}
+.seg button{font-family:'Nunito';font-weight:800;font-size:14px;border:0;cursor:pointer;
+  padding:9px 16px;border-radius:999px;background:transparent;color:var(--tinta-2);transition:.2s}
+.seg button.on{background:var(--panel);color:var(--tinta);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.btn{font-family:'Nunito';font-weight:800;font-size:14px;cursor:pointer;border:0;
+  padding:11px 18px;border-radius:14px;background:var(--verde);color:#fff;
+  box-shadow:0 6px 16px rgba(29,191,115,.35);transition:.15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--tinta);box-shadow:inset 0 0 0 2px var(--linea)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 4px 0;font-weight:700;font-size:13px;color:var(--tinta-2)}
+.legend span{display:flex;align-items:center;gap:7px}
+.dot{width:14px;height:14px;border-radius:6px;display:inline-block}
+
+/* ---------- VIEWS ---------- */
+.view{animation:fade .45s ease}
+.view[hidden]{display:none}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- HERO WINNER ---------- */
+.hero{position:relative;overflow:hidden;margin-top:18px;border-radius:var(--radio);
+  background:linear-gradient(135deg,#16A75C,#27C06B 55%,#86E0A6);color:#fff;
+  padding:26px 30px;display:flex;align-items:center;gap:22px;box-shadow:var(--sombra)}
+.hero .ava{width:120px;height:120px;flex:none;filter:drop-shadow(0 8px 12px rgba(0,0,0,.18))}
+.hero .tag{font-weight:900;letter-spacing:.5px;text-transform:uppercase;font-size:14px;opacity:.92}
+.hero h2{font-size:34px;line-height:1.05;margin:2px 0 4px}
+.hero .sc{font-size:20px;font-weight:900}
+.hero .pill{display:inline-block;margin-top:8px;background:rgba(255,255,255,.2);
+  padding:6px 14px;border-radius:999px;font-weight:800;font-size:14px}
+
+/* ---------- PODIO ---------- */
+.podio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;align-items:end;
+  margin-top:22px}
+.pcard{display:flex;flex-direction:column;align-items:center;text-align:center}
+.pava{width:96px;height:96px;margin-bottom:-14px;z-index:2;
+  filter:drop-shadow(0 8px 10px rgba(0,0,0,.15));
+  animation:pop .6s cubic-bezier(.2,1.4,.4,1) both}
+.pname{font-family:'Poppins';font-weight:800;font-size:18px;margin-top:18px}
+.pscore{font-family:'Poppins';font-weight:800;font-size:24px}
+.block{width:100%;border-radius:20px 20px 0 0;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding-top:16px;color:#fff;
+  transform-origin:bottom;animation:rise .7s cubic-bezier(.2,1,.3,1) both}
+.block .medal{font-size:30px}
+.block .rk{font-family:'Poppins';font-weight:800;font-size:15px;opacity:.95;margin-top:2px}
+.b1{height:190px;background:linear-gradient(180deg,#FFD84D,#F4B61C)}
+.b2{height:150px;background:linear-gradient(180deg,#D7DEE8,#AEB9C9)}
+.b3{height:120px;background:linear-gradient(180deg,#EFA45C,#D9802F)}
+.b1{animation-delay:.05s}.b2{animation-delay:.18s}.b3{animation-delay:.3s}
+@keyframes rise{from{transform:scaleY(.05)}to{transform:scaleY(1)}}
+@keyframes pop{from{opacity:0;transform:scale(.4) translateY(20px)}to{opacity:1;transform:none}}
+
+/* ---------- RANKING ---------- */
+.card{background:var(--panel);border-radius:var(--radio);box-shadow:var(--sombra);
+  padding:22px 24px;margin-top:22px}
+.card h3{font-size:19px;margin-bottom:4px}
+.card .sub{color:var(--tinta-2);font-weight:700;font-size:13px;margin-bottom:16px}
+.row{display:grid;grid-template-columns:150px 1fr 66px 150px;align-items:center;gap:12px;margin:10px 0}
+.who{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14.5px}
+.who .mini{width:36px;height:36px;flex:none}
+.track{position:relative;height:30px;background:var(--crema);border-radius:999px;overflow:hidden}
+.zero{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#CBD8D0;z-index:1}
+.fill{position:absolute;top:0;bottom:0;min-width:5px;transition:width 1s cubic-bezier(.2,1,.3,1)}
+.scoreNum{font-family:'Poppins';font-weight:800;font-size:14px;text-align:right;white-space:nowrap}
+.tierTxt{font-weight:800;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- RESEARCHER ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:22px}
+.kpi{background:var(--panel);border-radius:18px;box-shadow:var(--sombra);padding:16px 18px}
+.kpi .l{font-size:12px;font-weight:800;color:var(--tinta-2);text-transform:uppercase;letter-spacing:.4px}
+.kpi .n{font-family:'Poppins';font-weight:800;font-size:26px;margin-top:4px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;font-weight:700}
+th,td{padding:10px 8px;text-align:center}
+th{font-size:12px;color:var(--tinta-2);text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid var(--linea)}
+td:first-child,th:first-child{text-align:left;font-weight:800}
+tbody tr:nth-child(even){background:#FAFCFA}
+.cell{display:inline-block;min-width:46px;padding:6px 4px;border-radius:10px;font-weight:800;font-size:13px}
+.note{font-size:12.5px;color:var(--tinta-2);font-weight:700;margin-top:12px;line-height:1.6}
+.flag{display:inline-block;background:#EAF6EF;color:#157a4c;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:800}
+
+/* ---------- INICIO ---------- */
+.homehero{margin-top:18px;border-radius:var(--radio);color:#fff;padding:28px 32px;
+  background:linear-gradient(135deg,#16A75C,#27C06B 55%,#86E0A6);box-shadow:var(--sombra);
+  display:flex;align-items:center;gap:26px}
+.homehero .homeava{width:128px;height:128px;flex:none;filter:drop-shadow(0 8px 12px rgba(0,0,0,.18))}
+.homehero .kick{font-weight:900;letter-spacing:.5px;text-transform:uppercase;font-size:12.5px;opacity:.92}
+.homehero h2{font-size:34px;line-height:1.08;margin:4px 0 10px;text-wrap:balance}
+.homehero p{font-size:15.5px;line-height:1.6;font-weight:700;max-width:62ch;opacity:.96}
+.navgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:22px}
+.navcard{font-family:'Nunito';text-align:left;cursor:pointer;border:0;color:#fff;position:relative;overflow:hidden;
+  border-radius:26px;box-shadow:var(--sombra);padding:28px 28px 26px;min-height:290px;
+  display:flex;flex-direction:column;justify-content:flex-end;gap:8px;min-width:0;
+  transition:transform .18s,box-shadow .18s}
+.navcard:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(31,74,58,.24)}
+.navcard:focus-visible,.btn:focus-visible,.seg button:focus-visible{outline:3px solid var(--verde);outline-offset:3px}
+.navcard.n1{background:linear-gradient(150deg,#0E5B3A 0%,#1C8A58 100%)}
+.navcard.n2{background:linear-gradient(150deg,#6B4219 0%,#A8631F 100%)}
+.navcard.n3{background:linear-gradient(150deg,#123F33 0%,#17744F 100%)}
+.navcard .bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.navcard .bg svg{width:100%;height:100%;display:block}
+.navcard::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.55) 100%)}
+.navcard .t,.navcard .d,.navcard .go{position:relative;z-index:2}
+.navcard .t{font-family:'Poppins';font-weight:800;font-size:26px;line-height:1.1;text-wrap:balance}
+.navcard .d{font-size:15px;line-height:1.5;font-weight:700;opacity:.96}
+.navcard .go{padding-top:8px;font-weight:900;font-size:15px}
+@media(max-width:720px){.navcard{min-height:230px}}
+.resbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;
+  background:var(--panel);border-radius:var(--radio);box-shadow:var(--sombra);padding:10px 14px}
+.resbar[hidden]{display:none}
+.demonote{display:flex;gap:12px;align-items:flex-start;margin-top:12px;padding:14px 18px;border-radius:18px;
+  background:#FFF3D6;border:2px solid #F4D488;color:#5a3d00;font-size:14px;font-weight:700;line-height:1.55}
+.demonote[hidden]{display:none}
+.demonote b{font-weight:900}
+.demonote .ic{font-size:20px;line-height:1.3;flex:none}
+.resbar .datastatus{margin-right:auto;font-weight:800;font-size:13px;color:var(--tinta-2);min-width:0}
+@media(max-width:720px){.homehero{flex-direction:column;text-align:center;padding:24px 20px}.homehero h2{font-size:27px}}
+
+/* confetti */
+.confetti{position:absolute;width:9px;height:14px;border-radius:3px;top:-20px;opacity:.9;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(220px) rotate(360deg)}}
+.foot{text-align:center;color:var(--tinta-2);font-weight:700;font-size:12.5px;margin:26px 0 6px}
+@media(max-width:720px){.podio{gap:8px}.hero{flex-direction:column;text-align:center}.row{grid-template-columns:1fr}}
+
+/* ---------- CONTENIDO INFORMATIVO (intro / puntos) ---------- */
+.card p{font-size:14.5px;line-height:1.65;color:var(--tinta);margin:8px 0}
+.card p.lead{font-size:15.5px}
+.card ol,.card ul{margin:8px 0 4px;padding-left:20px;font-size:14.5px;line-height:1.65}
+.card li{margin:6px 0}
+.card b{font-weight:800}
+.formula{background:var(--crema);border-radius:14px;padding:14px 16px;margin:10px 0;
+  font-family:'Poppins';font-weight:700;font-size:15px;color:#15633f;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.chip{background:var(--crema);border-radius:999px;padding:8px 14px;font-weight:800;font-size:13px}
+.chip i{font-style:normal;color:var(--tinta-2);margin:0 4px}
+.miniava{display:inline-block;width:46px;height:46px;vertical-align:middle}
+.sprite{height:68px;width:auto;max-width:48%;object-fit:contain;vertical-align:middle;margin:0 3px 4px 0}
+.scenes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:6px}
+.scene{margin:0;min-width:0}
+.scene img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:var(--sombra)}
+.scene figcaption{font-size:13px;font-weight:700;color:var(--tinta-2);line-height:1.5;margin-top:8px}
+.scene figcaption b{color:var(--tinta)}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:16px}
+.fig{margin:0;min-width:0;display:flex;flex-direction:column;gap:8px}
+.fig .frame{background:#fff;border:2px solid var(--linea);border-radius:14px;overflow:hidden;display:grid;place-items:center;aspect-ratio:4/3}
+.fig img{display:block;width:100%;height:100%;object-fit:contain}
+.fig figcaption{font-size:13px;font-weight:700;color:var(--tinta-2);line-height:1.5}
+.fig figcaption b{color:var(--tinta)}
+.subhead{font-family:'Poppins';font-weight:800;font-size:15px;margin-top:20px}
+.tagrow{display:inline-block;padding:3px 10px;border-radius:8px;font-weight:800;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar">
+    <div class="brand">
+      <div class="logo">
+        <svg width="34" height="34" viewBox="0 0 100 100"><path d="M20 62c0-22 16-38 36-38 9 0 16 3 16 3l-8 9 12 2-6 9 10 3c-6 16-21 27-38 27-12 0-22-6-22-15z" fill="#F2B705"/><circle cx="40" cy="46" r="4" fill="#243B36"/><path d="M58 47l26-7-22 16z" fill="#3a4048"/></svg>
+      </div>
+      <div>
+        <h1>Avistamiento de Aves</h1>
+        <p>Resultados del reto · eye-tracking</p>
+      </div>
+    </div>
+    <div class="seg" role="tablist">
+      <button id="tabInicio" class="on" onclick="setView('inicio')">🏠 Inicio</button>
+      <button id="tabIntro" onclick="setView('intro')">📖 Introducción</button>
+      <button id="tabJuego" onclick="setView('juego')">🎮 Instrucciones de juego</button>
+      <button id="tabResultados" onclick="setView(LASTRES)">📊 Resultados</button>
+    </div>
+    <input id="file" type="file" accept=".csv" hidden onchange="loadCSV(event)">
+  </div>
+
+  <div class="resbar" id="resbar" hidden>
+    <div class="seg" role="tablist">
+      <button id="tabKids" onclick="setView('kids')">🏆 Podio</button>
+      <button id="tabRes" onclick="setView('res')">📈 Desempeño</button>
+    </div>
+    <span class="datastatus" id="dataStatus"></span>
+    <button id="btnLoad" class="btn" onclick="document.getElementById('file').click()">📂 Cargar CSV</button>
+  </div>
+  <div class="demonote" id="demoNote" role="note" hidden>
+    <span class="ic" aria-hidden="true">ℹ️</span>
+    <div><b>Estás viendo datos de prueba</b> (8 jugadores ficticios). Para ver resultados nuevos, carga un archivo <b>CSV</b> exportado de Gazepoint (<i>Data Summary</i>) con el botón <b>Cargar CSV</b>.</div>
+  </div>
+
+  <div class="legend" id="legend">
+    <span><i class="dot" style="background:#E12B27"></i><i class="dot" style="background:#CC2B9E;margin-left:-5px"></i>Penalización −5/s</span>
+    <span><i class="dot" style="background:#F2B705"></i><i class="dot" style="background:#F07A1F;margin-left:-5px"></i>Recompensa +5/s</span>
+    <span><i class="dot" style="background:#7A8B2E"></i><i class="dot" style="background:#8A5A2B;margin-left:-5px"></i>Recompensa alta +10/s</span>
+    <span style="color:var(--tinta-2)">· solo cuentan fijaciones ≥ 0,2 s</span>
+  </div>
+
+  <!-- ================= INICIO ================= -->
+  <section id="inicio" class="view">
+    <div class="homehero">
+      <div class="homeava" id="homeAva"></div>
+      <div>
+        <h2>¡Bienvenido al juego de Avistamiento de Aves en la Selva!</h2>
+        <p>Explora escenas de selva, busca las aves que dan más puntos y evita las que los quitan. Mientras juegas, un eye tracker registra hacia dónde miras.</p>
+      </div>
+    </div>
+
+    <div class="navgrid">
+      <button class="navcard n1" onclick="setView('intro')">
+        <span class="bg" id="bg1" aria-hidden="true"></span>
+        <span class="t">Introducción</span>
+        <span class="d">Qué es el juego, qué mide y cómo se calcula el puntaje.</span>
+        <span class="go">Abrir →</span>
+      </button>
+      <button class="navcard n2" onclick="setView('juego')">
+        <span class="bg" id="bg2" aria-hidden="true"></span>
+        <span class="t">Instrucciones de juego</span>
+        <span class="d">Cómo se juega: qué aves buscar, cuáles evitar y cómo se gana.</span>
+        <span class="go">Abrir →</span>
+      </button>
+      <button class="navcard n3" onclick="setView(LASTRES)">
+        <span class="bg" id="bg3" aria-hidden="true"></span>
+        <span class="t">Resultados</span>
+        <span class="d">Podio y desempeño de los participantes. Aquí puedes cargar el CSV de Gazepoint.</span>
+        <span class="go">Abrir →</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= INTRODUCCIÓN ================= -->
+  <section id="intro" class="view" hidden>
+    <div class="card">
+      <h3>👋 ¿Qué es «Avistamiento de Aves en la Selva»?</h3>
+      <div class="sub">Un juego de atención visual con eye-tracking para niños de 11 a 15 años.</div>
+      <p class="lead">El participante explora escenas de selva buscando aves de colores para ganar puntos. Mientras juega, el eye tracker registra hacia dónde mira en cada momento.</p>
+      <p>El juego mide dos capacidades cognitivas: <b>búsqueda visual activa</b> — encontrar el ave amarilla, la de mayor valor y la más difícil de ubicar — y <b>control inhibitorio</b> — evitar quedarse mirando las aves moradas, que penalizan aunque sean las más llamativas de la escena.</p>
+    </div>
+    <div class="card">
+      <h3>🎥 El eye tracker: Gazepoint GP3HD</h3>
+      <p>El GP3HD es un <b>eye tracker remoto</b>: se coloca bajo la pantalla y mide la mirada sin ningún contacto con el participante. Registra la posición de los ojos muchas veces por segundo; con el software <b>Gazepoint Analysis</b> se dibujan zonas de interés (AOIs) sobre cada ave y se obtiene cuánto tiempo se fijó la mirada en cada una.</p>
+      <div class="kpis">
+        <div class="kpi"><div class="l">Tipo</div><div class="n" style="font-size:18px">Remoto, sin contacto</div></div>
+        <div class="kpi"><div class="l">Frecuencia</div><div class="n">60 Hz</div></div>
+        <div class="kpi"><div class="l">Distancia ojo–pantalla</div><div class="n">≈ 65 cm</div></div>
+        <div class="kpi"><div class="l">Software</div><div class="n" style="font-size:18px">Gazepoint Analysis v7.1</div></div>
+      </div>
+      <div class="subhead">Instalación del equipo</div>
+      <div class="figs">
+        <figure class="fig">
+          <div class="frame"><img src="assets/instal_conexiones.jpg" alt="Escáner Gazepoint sobre su trípode con el cable USB conectado" loading="lazy"></div>
+          <figcaption><b>1. Conexiones.</b> Conecta el cable de datos y el de poder al escáner y a los puertos USB del computador donde se presentan los estímulos. Apoya el escáner en el trípode para evitar movimientos no deseados.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="frame"><img src="assets/instal_ubicacion.png" alt="Esquema de una persona sentada frente a la pantalla: 65 cm de distancia y el escáner 40 cm por debajo de los ojos" loading="lazy"></div>
+          <figcaption><b>2. Ubicación.</b> Apunta el escáner hacia los ojos del participante, a unos 65 cm y 40 cm por debajo del nivel de los ojos. El soporte para la cabeza ayuda a mantener quieta a la persona, pero no es obligatorio. Asegúrate de que esté cómoda.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="frame"><img src="assets/instal_control.png" alt="Ventana de Gazepoint Control con la barra de herramientas, el indicador verde de distancia y la barra de estado" loading="lazy"></div>
+          <figcaption><b>3. Gazepoint Control.</b> Mantiene el escáner en funcionamiento y permite calibrar. El indicador verde del centro confirma la distancia apropiada al estímulo. Abajo se ve la frecuencia (62 Hz) y el modelo (GP3HD).</figcaption>
+        </figure>
+      </div>
+      <div class="note">Imágenes de la presentación «Uso de Eye Tracker V1» del Semillero de Cognición. Se omitió la vista de los ojos del participante.</div>
+    </div>
+    <div class="card">
+      <h3>🎯 Calibración (antes de cada participante)</h3>
+      <ol>
+        <li>Sienta al niño cómodo y centrado frente a la pantalla, a <b>~65 cm</b>, con la cabeza estable y la mirada a la altura del monitor.</li>
+        <li>Verifica en Gazepoint que los <b>dos ojos</b> se detectan bien (ventana de seguimiento) y ajusta altura/distancia si hace falta.</li>
+        <li>Lanza la <b>calibración de 5 o 9 puntos</b> y pide al niño que siga el punto sin mover la cabeza.</li>
+        <li><b>Valida</b> la precisión; si algún punto quedó impreciso, repite la calibración.</li>
+        <li>Antes de empezar, fija el <b>Fixation Filter en 200 ms</b> y la <b>duración de cada estímulo por nivel</b>.</li>
+      </ol>
+      <div class="figs">
+        <figure class="fig">
+          <div class="frame"><img src="assets/instal_calib1.png" alt="Pantalla oscura de calibración con un punto numerado en una esquina" loading="lazy"></div>
+          <figcaption><b>Durante la calibración.</b> El participante sigue con la mirada cada punto que aparece: uno al centro y uno en cada esquina.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="frame"><img src="assets/instal_calib2.png" alt="Pantalla de validación de la calibración con círculos y las trayectorias de la mirada en verde" loading="lazy"></div>
+          <figcaption><b>Validación.</b> La mirada debe pasar por al menos 5 puntos. Si alguno queda impreciso, repite la calibración.</figcaption>
+        </figure>
+      </div>
+      <div class="note">Recordatorios de configuración — Fixation Filter: <b>200 ms</b> · Duraciones: E1–E2 5,0 s · E3–E4 4,5 s · E5–E6 4,0 s · E7–E8 3,5 s · E9–E10 3,0 s.</div>
+    </div>
+    <div class="card">
+      <h3>🗺️ Secuencia de la sesión</h3>
+      <div class="chips">
+        <span class="chip">Bienvenida</span><i class="chip" style="background:none">→</i>
+        <span class="chip">Instrucciones</span><i class="chip" style="background:none">→</i>
+        <span class="chip">Calibración</span><i class="chip" style="background:none">→</i>
+        <span class="chip">¿Estás listo?</span><i class="chip" style="background:none">→</i>
+        <span class="chip">E1 … E10 <i>(con P1·P2·P3)</i></span><i class="chip" style="background:none">→</i>
+        <span class="chip">Resultados</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🎯 Las aves y sus puntos</h3>
+      <div class="sub">Hay 3 categorías funcionales, cada una con 2 colores. El puntaje depende de la categoría, no del color exacto.</div>
+      <table>
+        <thead><tr><th>Aves</th><th>Categoría</th><th>Colores</th><th>Valor</th><th>Saliencia</th><th>Dificultad</th></tr></thead>
+        <tbody>
+          <tr><td><img class="sprite" src="assets/A3.png" alt="Guacamayo rojo" loading="lazy"><img class="sprite" src="assets/A1.png" alt="Cacatúa magenta" loading="lazy"></td><td><b>Penalización</b></td><td>Rojo · Magenta</td><td><b style="color:#E12B27">−5 /s</b></td><td>Muy alta</td><td>Muy baja</td></tr>
+          <tr><td><img class="sprite" src="assets/A7.png" alt="Ave amarilla" loading="lazy"><img class="sprite" src="assets/A11.png" alt="Ave naranja" loading="lazy"></td><td><b>Recompensa</b></td><td>Amarillo · Naranja</td><td><b style="color:#15A36B">+5 /s</b></td><td>Media</td><td>Media</td></tr>
+          <tr><td><img class="sprite" src="assets/A12.png" alt="Ave verde camuflada" loading="lazy"><img class="sprite" src="assets/A15.png" alt="Búho marrón" loading="lazy"></td><td><b>Recompensa alta</b></td><td>Verde oliva · Marrón</td><td><b style="color:#15A36B">+10 /s</b></td><td>Baja</td><td>Alta</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Sobre el verde de la selva, el <b>rojo y el magenta</b> contrastan al máximo y se detectan solos; el <b>verde oliva y el marrón</b> se camuflan con hojas, ramas y corteza. A propósito, la recompensa más alta es la más difícil de encontrar.</div>
+    </div>
+    <div class="card">
+      <h3>🧠 La idea: saliencia ≠ valor</h3>
+      <p>El sistema <b>invierte</b> la relación habitual entre lo que más llama la atención y lo que más conviene mirar. Lo más vistoso (rojo y magenta) <b>penaliza</b>; lo más valioso (verde y marrón) está <b>camuflado</b> y hay que buscarlo activamente.</p>
+      <p>Esto enfrenta dos sistemas atencionales: la <b>atención bottom-up</b>, capturada de forma automática por la saliencia (favorece rojo y magenta), y la <b>atención top-down</b>, guiada por metas y estrategia (necesaria para encontrar el verde y el marrón). El buen desempeño exige <b>inhibir</b> lo llamativo y sostener una búsqueda dirigida por objetivos.</p>
+      <div class="note">Predicción de eye-tracking: las primeras fijaciones tienden a ir al rojo/magenta (saliencia); los participantes con mejor desempeño aprenden a ignorarlos y aumentan las fijaciones sobre las aves verdes y marrones. Esto permite estudiar el paso de atención automática a atención dirigida por objetivos.</div>
+    </div>
+    <div class="card">
+      <h3>🧮 Cómo se calcula el puntaje</h3>
+      <p>El puntaje total es la suma, sobre todas las aves, del <b>tiempo de fijación</b> multiplicado por el <b>valor</b> del color — contando solo las fijaciones realmente intencionales:</p>
+      <div class="formula">Puntaje = Σ ( tiempo_fijación × valor )  ·  solo fijaciones ≥ 0,2 s</div>
+      <p><b>Umbral de 200 ms.</b> Una mirada que dura menos de 0,2 s es un barrido reflejo, no atención sostenida: no suma ni resta. En datos piloto, el 39 % de las fijaciones quedaban por debajo de ese umbral. Así, una penalización solo ocurre cuando el participante <b>decidió</b> quedarse mirando un ave roja o magenta.</p>
+      <p>Un tiempo de <b>−1</b> (AOI nunca visto) cuenta como 0. La penalización (−5/s) resta a la misma tasa que la recompensa media (+5/s): el error es recuperable y no desmotiva.</p>
+    </div>
+    <div class="card">
+      <h3>👁️ Qué mide el eye tracker y qué usamos</h3>
+      <div class="sub">Del Data Summary de Gazepoint tomamos varias medidas; solo una entra al puntaje, el resto enriquece el análisis.</div>
+      <table>
+        <thead><tr><th>Medida (columna Gazepoint)</th><th>Para qué se usa</th></tr></thead>
+        <tbody>
+          <tr><td><b>Time Viewed (sec)</b> — tiempo de fijación por AOI</td><td><span class="tagrow" style="background:#EAF6EF;color:#15633f">Núcleo del puntaje</span> (con el umbral de 0,2 s)</td></tr>
+          <tr><td><b>Time to 1st View</b> — tiempo hasta la 1ª fijación</td><td>Métrica de búsqueda: TTF en la recompensa alta (verde/marrón)</td></tr>
+          <tr><td><b>Fixations (#)</b> — nº de fijaciones</td><td>Métrica de exploración (vista investigador)</td></tr>
+          <tr><td><b>Revisits</b> — revisitas al AOI</td><td>Métrica de re-enganche atencional</td></tr>
+          <tr><td><b>Pupila (L/R)</b></td><td>Métrica exploratoria (vista investigador)</td></tr>
+        </tbody>
+      </table>
+      <div class="note">El desempeño se calcula <b>solo</b> con Time Viewed (sec) por AOI ≥ 0,2 s. Las demás medidas no afectan el puntaje; sirven para interpretar la estrategia en la pestaña Investigador.</div>
+    </div>
+    <div class="card">
+      <h3>🏅 Desempeño final y clasificación</h3>
+      <div class="sub">El puntaje continuo se traduce a una categoría para comunicarla al participante.</div>
+      <table>
+        <thead><tr><th>Nivel</th><th>Rango</th><th>Significado</th></tr></thead>
+        <tbody>
+          <tr><td>🏆 Maestro Avistador</td><td>&gt; 100 pts</td><td>Control atencional óptimo: ignoró los distractores y buscó la recompensa alta camuflada.</td></tr>
+          <tr><td>🥇 Avistador Experto</td><td>50 – 99 pts</td><td>Estrategia eficiente: combina recompensas medias y altas.</td></tr>
+          <tr><td>🥈 Explorador</td><td>0 – 49 pts</td><td>Explora, pero sin una estrategia de búsqueda clara.</td></tr>
+          <tr><td>🥉 Aprendiz</td><td>Negativo</td><td>Los distractores rojos y magenta fueron muy tramposos: más práctica.</td></tr>
+        </tbody>
+      </table>
+      <div class="note">El análisis de investigación siempre usa el puntaje continuo; la clasificación es solo para comunicar el resultado de forma amigable.</div>
+    </div>
+  </section>
+
+  <!-- ================= INSTRUCCIONES DE JUEGO ================= -->
+  <section id="juego" class="view" hidden>
+    <div class="card">
+      <h3>🎮 ¿Cómo se juega?</h3>
+      <div class="sub">Un juego de exploración para chicos y chicas de 11 a 15 años.</div>
+      <p class="lead">Eres un <b>avistador de aves</b> en la selva. En cada escena aparecen varias aves de colores escondidas entre las plantas… y solo tienes <b>unos pocos segundos</b> para mirarlas antes de que aparezca la siguiente.</p>
+      <p>El truco está en <b>dónde pones los ojos</b>: el juego registra hacia dónde miras. Algunas aves <b>te dan puntos</b> y otras <b>te los quitan</b>, así que conviene elegir bien a cuáles dedicarles la mirada.</p>
+    </div>
+
+    <div class="card">
+      <h3>🐦 Qué aves buscar (y cuáles evitar)</h3>
+      <div class="sub">No te dejes engañar: las más vistosas no siempre son las que más convienen.</div>
+      <table>
+        <thead><tr><th>Aves</th><th>¿Qué pasa si las miras?</th><th>Truco</th></tr></thead>
+        <tbody>
+          <tr><td><img class="sprite" src="assets/A12.png" alt="Ave verde camuflada" loading="lazy"><img class="sprite" src="assets/A15.png" alt="Búho marrón" loading="lazy"><br><b>Verdes y marrones</b></td><td><b style="color:#15A36B">Te dan MÁS puntos</b> (+10/s)</td><td>Están camufladas con las hojas y ramas: hay que <b>buscarlas con atención</b>.</td></tr>
+          <tr><td><img class="sprite" src="assets/A7.png" alt="Ave amarilla" loading="lazy"><img class="sprite" src="assets/A11.png" alt="Ave naranja" loading="lazy"><br><b>Amarillas y naranjas</b></td><td><b style="color:#15A36B">Te dan puntos</b> (+5/s)</td><td>Se ven con una búsqueda corta. Son un buen apoyo.</td></tr>
+          <tr><td><img class="sprite" src="assets/A3.png" alt="Guacamayo rojo" loading="lazy"><img class="sprite" src="assets/A1.png" alt="Cacatúa magenta" loading="lazy"><br><b>Rojas y magenta</b></td><td><b style="color:#E12B27">Te QUITAN puntos</b> (−5/s)</td><td>Son las más llamativas: ¡es una trampa! Mejor <b>no te quedes mirándolas</b>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>👀 Así se ve una escena</h3>
+      <div class="sub">Dos escenas de ejemplo del juego. Prueba a encontrar las aves verdes y marrones: son las que más valen.</div>
+      <div class="scenes">
+        <figure class="scene"><img src="assets/E1.jpg" alt="Escena de selva con un arroyo y aves de varios colores" loading="lazy">
+          <figcaption><b>Nivel 1 · Calentamiento (E1).</b> 5,0 s para mirar. Pocas aves de penalización y las de recompensa se ven con facilidad.</figcaption></figure>
+        <figure class="scene"><img src="assets/E10.jpg" alt="Escena de selva con árboles grandes y un camino de tierra" loading="lazy">
+          <figcaption><b>Nivel 5 · Maestro (E10).</b> 3,0 s para mirar. Las aves de recompensa alta quedan muy camufladas entre la vegetación.</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🏁 Las reglas en 4 pasos</h3>
+      <ol>
+        <li><b>Observa</b> cada escena de selva apenas aparece.</li>
+        <li><b>Busca</b> las aves verdes y marrones (las que más valen) y míralas: están escondidas, así que toca rastrear.</li>
+        <li><b>Evita</b> quedarte mirando las rojas y magenta, aunque salten a la vista: te restan puntos.</li>
+        <li><b>Repite</b> en cada escena. El juego va de fácil a difícil, con menos tiempo y más distractores en cada nivel.</li>
+      </ol>
+      <div class="note">Solo cuenta cuando te quedas mirando un ave de verdad (al menos 0,2 segundos). Un vistazo rapidísimo de reojo no suma ni resta.</div>
+    </div>
+
+    <div class="card">
+      <h3>🏆 ¿Cómo se gana?</h3>
+      <p>Al final se suman tus puntos y obtienes una <b>medalla</b> según tu desempeño:</p>
+      <div class="chips">
+        <span class="chip">🏆 Maestro Avistador</span>
+        <span class="chip">🥇 Avistador Experto</span>
+        <span class="chip">🥈 Explorador</span>
+        <span class="chip">🥉 Aprendiz</span>
+      </div>
+      <p style="margin-top:10px">Si juegan varias personas, se arma un <b>podio</b> con quienes consiguieron más puntos. ¡A ver quién es el mejor avistador de la selva! 🦜</p>
+    </div>
+  </section>
+
+  <!-- ================= VISTA NIÑOS ================= -->
+  <section id="kids" class="view" hidden>
+    <div class="hero" id="hero"></div>
+    <div class="podio" id="podio"></div>
+    <div class="card">
+      <h3>🏅 Ranking de avistadores</h3>
+      <div class="sub">Cuánto ganó cada quien. Las barras hacia la izquierda son penalizaciones por mirar aves rojas o magenta.</div>
+      <div id="ranking"></div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA INVESTIGADOR ================= -->
+  <section id="res" class="view" hidden>
+    <div class="kpis" id="kpis"></div>
+    <div class="card">
+      <h3>🔥 Mapa de atención por escena</h3>
+      <div class="sub">Puntaje neto de cada participante en cada estímulo (verde = ganancia, rojo = penalización por distractores morados).</div>
+      <div style="overflow-x:auto"><table id="heat"></table></div>
+      <div class="note">Este mapa se deriva del tiempo de permanencia por AOI del Data Summary. Para mapas de calor de coordenadas de mirada se requiere el export de gaze points crudos de Gazepoint (no incluido en el AOI Summary).</div>
+    </div>
+    <div class="card">
+      <h3>👁 Métricas de eye-tracking</h3>
+      <div class="sub">Indicadores por participante para análisis de búsqueda visual y control inhibitorio.</div>
+      <div style="overflow-x:auto"><table id="metrics"></table></div>
+      <div class="note">TTF rec. alta = tiempo medio hasta la primera fijación válida en un ave de recompensa alta (verde/marrón), el objetivo de la búsqueda dirigida. Altas vistas = aves de máxima recompensa localizadas sobre el total. Tiempo de penalización alto + puntaje bajo sugiere control inhibitorio débil (capturado por el rojo/magenta).</div>
+    </div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+/* ===== datos de demostración (8 jugadores) — se reemplazan al cargar un CSV ===== */
+const DEMO = {
+ "scenes": [
+  "E1.jpg",
+  "E2.jpg",
+  "E3.jpg",
+  "E4.jpg",
+  "E5.jpg",
+  "E6.jpg",
+  "E7.jpg",
+  "E8.jpg",
+  "E9.jpg"
+ ],
+ "players": [
+  {
+   "name": "Andrés López",
+   "score": 154.9,
+   "ta": 9.69,
+   "tr": 12.23,
+   "tm": 0.63,
+   "scenes": 9,
+   "fix": 102,
+   "rev": 2,
+   "pupil": 3.95,
+   "ttf_y": 2.06,
+   "y_seen": 12,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": 21.6,
+    "E2.jpg": 12.4,
+    "E3.jpg": 13.9,
+    "E4.jpg": 18.6,
+    "E5.jpg": 15.2,
+    "E6.jpg": 8.5,
+    "E7.jpg": 4.0,
+    "E8.jpg": 27.3,
+    "E9.jpg": 33.3
+   }
+  },
+  {
+   "name": "Felipe Morales",
+   "score": 140.1,
+   "ta": 8.97,
+   "tr": 13.27,
+   "tm": 3.2,
+   "scenes": 9,
+   "fix": 111,
+   "rev": 3,
+   "pupil": 3.45,
+   "ttf_y": 2.05,
+   "y_seen": 9,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": 2.7,
+    "E2.jpg": 13.6,
+    "E3.jpg": 13.5,
+    "E4.jpg": 4.1,
+    "E5.jpg": 38.4,
+    "E6.jpg": 12.8,
+    "E7.jpg": 25.7,
+    "E8.jpg": 14.7,
+    "E9.jpg": 14.5
+   }
+  },
+  {
+   "name": "Valentina Pérez",
+   "score": 116.1,
+   "ta": 3.05,
+   "tr": 19.56,
+   "tm": 2.45,
+   "scenes": 9,
+   "fix": 110,
+   "rev": 4,
+   "pupil": 4.25,
+   "ttf_y": 2.93,
+   "y_seen": 6,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": 12.8,
+    "E2.jpg": 7.3,
+    "E3.jpg": 23.0,
+    "E4.jpg": 13.2,
+    "E5.jpg": 10.2,
+    "E6.jpg": 13.5,
+    "E7.jpg": 15.7,
+    "E8.jpg": 9.1,
+    "E9.jpg": 11.3
+   }
+  },
+  {
+   "name": "Carlos Rodríguez",
+   "score": 73.0,
+   "ta": 5.02,
+   "tr": 7.98,
+   "tm": 3.43,
+   "scenes": 9,
+   "fix": 82,
+   "rev": 1,
+   "pupil": 3.15,
+   "ttf_y": 2.78,
+   "y_seen": 11,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": 9.5,
+    "E2.jpg": 7.9,
+    "E3.jpg": 8.4,
+    "E4.jpg": 3.3,
+    "E5.jpg": 7.2,
+    "E6.jpg": 7.5,
+    "E7.jpg": 17.0,
+    "E8.jpg": 3.0,
+    "E9.jpg": 9.2
+   }
+  },
+  {
+   "name": "Sebastián Torres",
+   "score": 52.9,
+   "ta": 3.23,
+   "tr": 8.03,
+   "tm": 3.93,
+   "scenes": 9,
+   "fix": 78,
+   "rev": 1,
+   "pupil": 3.65,
+   "ttf_y": 2.22,
+   "y_seen": 3,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": 10.3,
+    "E2.jpg": 5.6,
+    "E3.jpg": 7.8,
+    "E4.jpg": 29.5,
+    "E5.jpg": 0.4,
+    "E6.jpg": -5.4,
+    "E7.jpg": -0.9,
+    "E8.jpg": 4.0,
+    "E9.jpg": 1.5
+   }
+  },
+  {
+   "name": "Juliana Castro",
+   "score": 31.8,
+   "ta": 1.83,
+   "tr": 8.8,
+   "tm": 6.1,
+   "scenes": 9,
+   "fix": 75,
+   "rev": 2,
+   "pupil": 4.05,
+   "ttf_y": 0.93,
+   "y_seen": 4,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": 2.8,
+    "E2.jpg": 8.5,
+    "E3.jpg": 2.2,
+    "E4.jpg": 1.7,
+    "E5.jpg": 4.9,
+    "E6.jpg": -1.8,
+    "E7.jpg": 9.2,
+    "E8.jpg": 3.6,
+    "E9.jpg": 0.7
+   }
+  },
+  {
+   "name": "María García",
+   "score": -19.7,
+   "ta": 1.34,
+   "tr": 3.75,
+   "tm": 10.37,
+   "scenes": 9,
+   "fix": 78,
+   "rev": 2,
+   "pupil": 3.35,
+   "ttf_y": 1.31,
+   "y_seen": 4,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": 2.8,
+    "E2.jpg": -1.1,
+    "E3.jpg": -3.8,
+    "E4.jpg": -2.6,
+    "E5.jpg": 2.0,
+    "E6.jpg": -5.1,
+    "E7.jpg": 1.1,
+    "E8.jpg": -1.8,
+    "E9.jpg": -11.1
+   }
+  },
+  {
+   "name": "Daniela Ramírez",
+   "score": -103.5,
+   "ta": 0,
+   "tr": 0.73,
+   "tm": 21.44,
+   "scenes": 9,
+   "fix": 103,
+   "rev": 5,
+   "pupil": 3.85,
+   "ttf_y": null,
+   "y_seen": 2,
+   "y_tot": 13,
+   "matrix": {
+    "E1.jpg": -0.0,
+    "E2.jpg": -1.8,
+    "E3.jpg": -7.7,
+    "E4.jpg": -2.5,
+    "E5.jpg": -6.2,
+    "E6.jpg": -23.9,
+    "E7.jpg": -14.3,
+    "E8.jpg": -18.9,
+    "E9.jpg": -28.2
+   }
+  }
+ ]
+};
+let STATE = DEMO;
+
+/* ===== avatares de aves (SVG) ===== */
+/* 🟡 lorito dorado (premium) */
+function toucan(crown){return `<svg viewBox="0 0 100 100">
+ <rect x="16" y="82" width="70" height="9" rx="4.5" fill="#7d5230"/>
+ <ellipse cx="40" cy="83" rx="11" ry="3" fill="#5f9a32"/><ellipse cx="70" cy="84" rx="9" ry="3" fill="#5f9a32"/>
+ <path d="M62 84l5 8M50 84l4 8" stroke="#3f4750" stroke-width="4" stroke-linecap="round"/>
+ <ellipse cx="54" cy="52" rx="26" ry="27" fill="#F2B705"/>
+ <path d="M34 56c0-13 10-22 24-22 5 0 8 1 8 1l-1 43c-19 3-31-8-31-22z" fill="#FFD957"/>
+ <path d="M60 36c11 1 19 11 19 24 0 8-3 15-3 15-7-4-13-14-15-25-1-8-1-14-1-14z" fill="#E08F00"/>
+ <ellipse cx="44" cy="40" rx="13" ry="12" fill="#FFE07A"/>
+ <circle cx="45" cy="40" r="6" fill="#23303a"/><circle cx="46.7" cy="38.3" r="1.9" fill="#fff"/>
+ <path d="M33 42c-9-1-14 3-14 6 0 3 6 5 14 4z" fill="#3a4048"/>
+ ${crown?'<path d="M40 16l7 9 7-12 7 12 7-9-3 16H43z" fill="#FFD23F" stroke="#E0A91C" stroke-width="1.5"/>':''}
+</svg>`}
+/* 🔴 guacamayo escarlata (estándar) */
+function cockatoo(){return `<svg viewBox="0 0 100 100">
+ <rect x="16" y="82" width="70" height="9" rx="4.5" fill="#7d5230"/>
+ <ellipse cx="42" cy="83" rx="11" ry="3" fill="#5f9a32"/>
+ <path d="M60 84l5 8M48 84l4 8" stroke="#3f4750" stroke-width="4" stroke-linecap="round"/>
+ <path d="M72 66l16 24-20-12z" fill="#C81E22"/>
+ <ellipse cx="52" cy="50" rx="25" ry="26" fill="#E12B27"/>
+ <path d="M33 54c0-12 9-21 23-21 4 0 7 1 7 1l-1 41c-18 3-29-8-29-21z" fill="#F2554F"/>
+ <path d="M60 38c11 1 19 9 20 20l-16 4c-2-11-4-24-4-24z" fill="#F2B705"/>
+ <path d="M64 58l16-2c-1 9-6 15-13 18z" fill="#1E6FD0"/>
+ <ellipse cx="42" cy="40" rx="13" ry="12" fill="#FBF1E2"/>
+ <circle cx="44" cy="40" r="6" fill="#23303a"/><circle cx="45.7" cy="38.3" r="1.9" fill="#fff"/>
+ <path d="M31 42c-9-1-14 3-14 6 0 3 6 5 14 4z" fill="#2a2f36"/>
+</svg>`}
+/* 🟣 cacatúa magenta con cresta (distractor) */
+function crow(){return `<svg viewBox="0 0 100 100">
+ <rect x="16" y="82" width="70" height="9" rx="4.5" fill="#7d5230"/>
+ <ellipse cx="44" cy="83" rx="11" ry="3" fill="#5f9a32"/>
+ <path d="M60 84l5 8M48 84l4 8" stroke="#3f4750" stroke-width="4" stroke-linecap="round"/>
+ <path d="M44 22c-3 7-1 15-1 15M53 17c0 9-3 19-3 19M61 22c3 7 1 15-2 16" stroke="#D6249F" stroke-width="6" stroke-linecap="round" fill="none"/>
+ <ellipse cx="52" cy="54" rx="25" ry="26" fill="#CC2B9E"/>
+ <path d="M33 58c0-12 9-21 23-21 4 0 7 1 7 1l-1 41c-18 3-29-8-29-21z" fill="#E25FB8"/>
+ <path d="M60 42c10 1 18 10 18 22 0 7-3 14-3 14-7-4-13-13-15-23-1-7-1-13-1-13z" fill="#A81F84"/>
+ <circle cx="45" cy="44" r="6" fill="#231019"/><circle cx="46.7" cy="42.3" r="1.9" fill="#fff"/>
+ <path d="M33 46c-8-1-13 3-13 6 0 3 6 5 13 4z" fill="#3a2d37"/>
+</svg>`}
+const AVA=[toucan(true),cockatoo(),crow()];
+/* paleta de avatares: un ave de color distinto por jugador (decorativo) */
+const AVPAL=[['#F2B705','#FFD957','#3a4048'],['#E12B27','#F2554F','#3a4048'],['#CC2B9E','#E25FB8','#3a2d37'],
+  ['#1E8FD0','#7FC0EC','#3a4048'],['#1DBF73','#7BD8AA','#3a4048'],['#F07A1F','#FBA94C','#3a4048'],
+  ['#8A5A2B','#B98A55','#3a4048'],['#7A4FD0','#B49BEA','#2d2440'],['#199E8A','#7FD3C6','#26403a'],
+  ['#C0497A','#E59DBB','#3a2630']];
+function miniFor(i){const c=AVPAL[i%AVPAL.length];return miniBird(c[0],c[1],c[2]);}
+
+/* ===== clasificación ===== */
+function klass(s){
+  if(s>=100)return{n:'Maestro Avistador',c:'#15A36B'};
+  if(s>=50)return{n:'Avistador Experto',c:'#4CC38A'};
+  if(s>=0)return{n:'Explorador',c:'#F4A23B'};
+  return{n:'Aprendiz',c:'#FF5C5C'};
+}
+const f1=x=>(x>=0?'+':'')+x.toFixed(1);
+
+/* ===== medalla SVG (oro/plata/bronce) ===== */
+function medalSVG(rank){
+  const c={1:['#FFD23F','#E0A91C','#6e5000'],2:['#DCE2EA','#AEB9C9','#4d5763'],3:['#E8A05C','#C77A33','#6e3f12']}[rank]||['#DCE2EA','#AEB9C9','#4d5763'];
+  return `<svg viewBox="0 0 48 62" width="42" height="54" aria-hidden="true">
+    <path d="M13 3 L23 5 L21 30 L10 27 Z" fill="#FF5C5C"/>
+    <path d="M35 3 L25 5 L27 30 L38 27 Z" fill="#1DBF73"/>
+    <circle cx="24" cy="42" r="18" fill="${c[0]}" stroke="${c[1]}" stroke-width="3"/>
+    <circle cx="24" cy="42" r="13" fill="none" stroke="${c[1]}" stroke-width="1.5" opacity=".5"/>
+    <text x="24" y="49" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="800" font-size="20" fill="${c[2]}">${rank}</text>
+  </svg>`;
+}
+
+/* ===== render vista niños ===== */
+function renderKids(){
+  const P=STATE.players, top=P.slice(0,3), g=top[0];
+  document.getElementById('hero').innerHTML=
+    `<div class="ava">${toucan(true)}</div>
+     <div><div class="tag">🏆 ¡Ganador del reto!</div>
+     <h2>${g.name}</h2>
+     <div class="sc">${f1(g.score)} puntos</div>
+     <div class="pill">${klass(g.score).n} · ${g.scenes} escenas</div></div>`+confetti();
+
+  const order=[1,0,2], blocks=['b2','b1','b3'], rk=['1º','2º','3º'];
+  document.getElementById('podio').innerHTML=order.map((pi,slot)=>{
+    const p=top[pi]; if(!p)return'<div></div>';
+    return `<div class="pcard">
+      <div class="pava">${AVA[pi]}</div>
+      <div class="pname">${p.name}</div>
+      <div class="pscore" style="color:${klass(p.score).c}">${f1(p.score)}</div>
+      <div class="block ${blocks[slot]}"><div class="medal">${medalSVG(pi+1)}</div><div class="rk">${rk[pi]}</div></div>
+    </div>`;}).join('');
+
+  const max=Math.max(...P.map(p=>Math.abs(p.score)),1);
+  document.getElementById('ranking').innerHTML=P.map((p,i)=>{
+    const k=klass(p.score), w=Math.abs(p.score)/max*50, neg=p.score<0;
+    const fill=neg
+      ? `<div class="fill" style="right:50%;width:0;background:${k.c};border-radius:999px 0 0 999px" data-w="${w}"></div>`
+      : `<div class="fill" style="left:50%;width:0;background:${k.c};border-radius:0 999px 999px 0" data-w="${w}"></div>`;
+    return `<div class="row">
+      <div class="who"><span class="mini">${miniFor(i)}</span>${p.name}</div>
+      <div class="track"><div class="zero"></div>${fill}</div>
+      <div class="scoreNum" style="color:${k.c}">${f1(p.score)}</div>
+      <div class="tierTxt" style="color:${k.c}">${k.n}</div>
+    </div>`;}).join('');
+  requestAnimationFrame(()=>setTimeout(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'),60));
+}
+function confetti(){let s='';const cols=['#FFC83D','#FF5C5C','#9B5DE5','#1DBF73','#fff'];
+  for(let i=0;i<26;i++)s+=`<span class="confetti" style="left:${Math.random()*100}%;background:${cols[i%5]};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*2}s"></span>`;
+  return s;}
+
+/* ===== render vista investigador ===== */
+function heatColor(v,max){
+  const t=Math.min(Math.abs(v)/max,1);
+  if(v>=0)return`background:rgba(29,191,115,${.12+t*.65});color:${t>.5?'#fff':'#15633f'}`;
+  return`background:rgba(255,92,92,${.12+t*.7});color:${t>.5?'#fff':'#9a2b2b'}`;
+}
+function renderRes(){
+  const P=STATE.players, S=STATE.scenes;
+  const best=P[0], avg=P.reduce((a,p)=>a+p.score,0)/P.length;
+  const totFix=P.reduce((a,p)=>a+p.fix,0);
+  document.getElementById('kpis').innerHTML=[
+    ['Participantes',P.length],
+    ['Mejor puntaje',f1(best.score)],
+    ['Puntaje promedio',f1(avg)],
+    ['Fijaciones totales',totFix],
+    ['Escenas',S.length]
+  ].map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="n">${k[1]}</div></div>`).join('');
+
+  let maxAbs=1;P.forEach(p=>S.forEach(s=>maxAbs=Math.max(maxAbs,Math.abs(p.matrix[s]||0))));
+  let h=`<thead><tr><th>Jugador</th>${S.map(s=>`<th>${s.replace('.jpg','')}</th>`).join('')}<th>Total</th></tr></thead><tbody>`;
+  P.forEach(p=>{h+=`<tr><td>${p.name}</td>${S.map(s=>{const v=p.matrix[s]||0;
+    return `<td><span class="cell" style="${heatColor(v,maxAbs)}">${f1(v)}</span></td>`}).join('')}
+    <td><span class="cell" style="${heatColor(p.score,Math.max(...P.map(x=>Math.abs(x.score))))}">${f1(p.score)}</span></td></tr>`;});
+  document.getElementById('heat').innerHTML=h+'</tbody>';
+
+  let m=`<thead><tr><th>Jugador</th><th>Puntaje</th><th>Clasificación</th>
+    <th>T. rec. alta (s)</th><th>T. recompensa (s)</th><th>T. penalización (s)</th>
+    <th>Fijaciones</th><th>Revisitas</th><th>TTF rec. alta (s)</th><th>Altas vistas</th><th>Pupila (mm)</th></tr></thead><tbody>`;
+  P.forEach(p=>{const k=klass(p.score);
+    m+=`<tr><td>${p.name}</td><td style="color:${k.c};font-weight:800">${f1(p.score)}</td>
+      <td><span class="flag" style="background:${k.c}22;color:${k.c}">${k.n}</span></td>
+      <td>${p.ta.toFixed(2)}</td><td>${p.tr.toFixed(2)}</td><td>${p.tm.toFixed(2)}</td>
+      <td>${p.fix}</td><td>${p.rev}</td><td>${p.ttf_y==null?'—':p.ttf_y.toFixed(2)}</td>
+      <td>${p.y_seen}/${p.y_tot}</td><td>${p.pupil.toFixed(2)}</td></tr>`;});
+  document.getElementById('metrics').innerHTML=m+'</tbody>';
+}
+
+/* ===== navegación ===== */
+function setView(v){
+  CUR=v; if(v==='kids'||v==='res')LASTRES=v;
+  if(typeof updateStatus==='function')updateStatus();
+  ['inicio','intro','juego','kids','res'].forEach(k=>document.getElementById(k).hidden=(k!==v));
+  document.getElementById('tabResultados').classList.toggle('on',v==='kids'||v==='res');
+  document.getElementById('resbar').hidden=!(v==='kids'||v==='res');
+  document.getElementById('tabInicio').classList.toggle('on',v==='inicio');
+  document.getElementById('tabIntro').classList.toggle('on',v==='intro');
+  document.getElementById('tabJuego').classList.toggle('on',v==='juego');
+  document.getElementById('tabKids').classList.toggle('on',v==='kids');
+  document.getElementById('tabRes').classList.toggle('on',v==='res');
+  document.getElementById('legend').style.display=(v==='kids'||v==='res')?'':'none';
+  if(v==='kids')renderKids(); else if(v==='res')renderRes();
+}
+function miniBird(b,be,bk){return `<svg viewBox="0 0 100 100"><ellipse cx="52" cy="54" rx="25" ry="26" fill="${b}"/><path d="M33 58c0-12 9-21 23-21 4 0 7 1 7 1l-1 41c-18 3-29-8-29-21z" fill="${be}"/><circle cx="45" cy="44" r="6" fill="#23303a"/><circle cx="46.7" cy="42.3" r="1.9" fill="#fff"/><path d="M33 46c-8-1-13 3-13 6 0 3 6 5 13 4z" fill="${bk}"/></svg>`}
+
+/* ===== carga y procesamiento de CSV Gazepoint ===== */
+/* categorías: alta=+10 (verde/marrón), rec=+5 (amarillo/naranja), pen=-5 (rojo/magenta) */
+const VAL={alta:10,rec:5,pen:-5};
+function colorOf(n){n=(n||'').trim().toLowerCase();
+  if(n.startsWith('verde')||n.startsWith('oliva')||n.startsWith('marron')||n.startsWith('marrón')||n.startsWith('green')||n.startsWith('brown'))return'alta';
+  if(n.startsWith('amarillo')||n.startsWith('dorado')||n.startsWith('naranja')||n.startsWith('naranjo')||n.startsWith('yellow')||n.startsWith('orange'))return'rec';
+  if(n.startsWith('rojo')||n.startsWith('magenta')||n.startsWith('morado')||n.startsWith('red')||n.startsWith('purple'))return'pen';
+  const v=parseFloat(n); if(isNaN(v))return null;          /* compat. nomenclatura previa */
+  if(v===10)return'alta'; if(v===5)return'rec'; if(v<0)return'pen'; return null;}
+function processCSV(text){
+  const lines=text.split(/\r?\n/);
+  let idx=lines.findIndex(l=>l.startsWith('AOI Statistics (for each user)'));
+  if(idx<0)throw new Error('No es un Data Summary export de Gazepoint.');
+  const hdr=lines[idx+1].replace(/,\s*$/,'').split(',').map(s=>s.trim());
+  const col=(...names)=>{for(const nm of names){const j=hdr.findIndex(h=>h.toLowerCase().startsWith(nm.toLowerCase()));if(j>=0)return j;}return -1;};
+  const cMedia=col('Media Name'),cAoi=col('AOI Name'),cName=col('User Name'),
+    cTtf=col('Time to 1st View'),cTime=col('Time Viewed (sec)'),cFix=col('Fixations'),
+    cRev=col('Revisits'),cPl=col('Ave Left Pupil'),cPr=col('Ave Right Pupil');
+  const P={},scenes=[];
+  for(let i=idx+2;i<lines.length;i++){
+    const p=lines[i].replace(/,\s*$/,'').split(',').map(s=>s.trim());
+    if(p.length<=cName||!p[cName])continue;
+    const u=p[cName],sc=p[cMedia];if(!scenes.includes(sc))scenes.push(sc);
+    const col2=colorOf(p[cAoi]);let t=parseFloat(p[cTime])||0;const ttf=parseFloat(p[cTtf]);
+    const d=P[u]||(P[u]={name:u,score:0,ta:0,tr:0,tm:0,scenes:new Set(),fix:0,rev:0,
+      pl:parseFloat(p[cPl])||0,pr:parseFloat(p[cPr])||0,ttf:[],ys:0,yt:0,matrix:{}});
+    d.matrix[sc]=d.matrix[sc]||0;
+    d.fix+=parseFloat(p[cFix])||0;d.rev+=parseFloat(p[cRev])||0;
+    if(t<0)t=0; if(t>0)d.scenes.add(sc);
+    if(col2==='alta'){d.yt++; if(t>0)d.ys++; if(ttf>=0&&t>=0.2)d.ttf.push(ttf);}
+    if(col2===null||t<0.2)continue;
+    d.score+=t*VAL[col2];d.matrix[sc]+=t*VAL[col2];
+    d['t'+(col2==='alta'?'a':col2==='rec'?'r':'m')]+=t;
+  }
+  const players=Object.values(P).map(d=>({name:d.name,score:+d.score.toFixed(1),
+    ta:+d.ta.toFixed(2),tr:+d.tr.toFixed(2),tm:+d.tm.toFixed(2),scenes:d.scenes.size,
+    fix:Math.round(d.fix),rev:Math.round(d.rev),pupil:+((d.pl+d.pr)/2).toFixed(2),
+    ttf_y:d.ttf.length?+(d.ttf.reduce((a,b)=>a+b,0)/d.ttf.length).toFixed(2):null,
+    y_seen:d.ys,y_tot:d.yt,
+    matrix:Object.fromEntries(scenes.map(s=>[s,+(d.matrix[s]||0).toFixed(1)]))}))
+    .sort((a,b)=>b.score-a.score);
+  return{scenes,players};
+}
+function decodeBuffer(buf){
+  // intenta UTF-8; si hay bytes inválidos (CSV de Gazepoint suele venir en Windows-1252), reintenta
+  try{return new TextDecoder('utf-8',{fatal:true}).decode(buf);}
+  catch(e){try{return new TextDecoder('windows-1252').decode(buf);}
+           catch(e2){return new TextDecoder('utf-8').decode(buf);}}
+}
+let IS_DEMO=true, LASTRES='kids', CUR='inicio';
+function updateStatus(){
+  const msg=IS_DEMO
+    ?'Datos de prueba: 8 jugadores ficticios'
+    :`Resultados cargados: ${STATE.players.length} participantes · ${STATE.scenes.length} escenas`;
+  document.getElementById('dataStatus').textContent=msg;
+  document.getElementById('demoNote').hidden=!(IS_DEMO&&(CUR==='kids'||CUR==='res'));
+  document.getElementById('foot').textContent='Avistamiento de Aves en la Selva · sistema calibrado (rojo/magenta −5/s, umbral 0,2 s) · '+msg.charAt(0).toLowerCase()+msg.slice(1);
+}
+function loadCSV(ev){const file=ev.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const txt=decodeBuffer(r.result);STATE=processCSV(txt);IS_DEMO=false;updateStatus();
+      setView(document.getElementById('tabRes').classList.contains('on')?'res':'kids');}
+    catch(e){alert('No se pudo procesar: '+e.message);}};
+  r.readAsArrayBuffer(file);}
+
+function leaf(x,y,r,sc,fill,vein){return `<g transform="translate(${x} ${y}) rotate(${r}) scale(${sc})"><path d="M0 0C28-46 98-46 132 0 98 46 28 46 0 0Z" fill="${fill}"/><path d="M4 0H126" stroke="${vein}" stroke-width="3" stroke-linecap="round" opacity=".6"/></g>`}
+function jungleBg(leaves,bird){
+  /* lienzo 300x290; las hojas ocupan la parte alta, el ave asoma arriba a la derecha */
+  return `<svg viewBox="0 0 300 290" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${leaves}${bird}</svg>`;}
+function setBgs(){
+  const L1=leaf(-20,40,-35,1.5,'#2FA56B','#0E5B3A')+leaf(300,20,215,1.7,'#1F8A58','#0E5B3A')+leaf(250,150,150,1.2,'#3DB878','#0E5B3A')+leaf(-10,150,20,1.1,'#168050','#0E5B3A');
+  const L2=leaf(-25,30,-30,1.5,'#7A8B2E','#4a5518')+leaf(310,40,210,1.6,'#8C9B3A','#4a5518')+leaf(270,170,160,1.2,'#6A7A25','#4a5518')+leaf(-10,160,25,1.1,'#8A5A2B','#4a2f12');
+  const L3=leaf(-20,40,-35,1.5,'#1F8A58','#0B3B2A')+leaf(305,25,215,1.7,'#2FA56B','#0B3B2A')+leaf(255,160,150,1.2,'#188354','#0B3B2A')+leaf(-10,155,20,1.1,'#2A9863','#0B3B2A');
+  const inner=(svg,x,y,w)=>`<g transform="translate(${x} ${y}) scale(${w/100})">${svg.replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</g>`;
+  document.getElementById('bg1').innerHTML=jungleBg(L1,inner(toucan(false),178,14,100));
+  /* en las instrucciones el ave verde oliva queda camuflada entre las hojas */
+  document.getElementById('bg2').innerHTML=jungleBg(L2,inner(miniBird('#7A8B2E','#8C9B3A','#3a4048'),190,34,78));
+  document.getElementById('bg3').innerHTML=jungleBg(L3,inner(toucan(true),178,6,104));
+}
+setBgs();
+document.getElementById('homeAva').innerHTML=toucan(true);
+updateStatus();
+setView('inicio');
+</script>
+</body>
+</html>
